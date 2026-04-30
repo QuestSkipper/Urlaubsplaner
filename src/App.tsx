@@ -205,17 +205,25 @@ export default function App() {
     }
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tripStart = new Date(startDate);
-    const tripEnd = endDate ? new Date(endDate) : tripStart;
+    
+    const [startYear, startMonth, startDay] = startDate.split('-').map(Number);
+    const tripStart = new Date(startYear, startMonth - 1, startDay);
+    
+    let tripEnd = tripStart;
+    if (endDate) {
+      const [endYear, endMonth, endDay] = endDate.split('-').map(Number);
+      tripEnd = new Date(endYear, endMonth - 1, endDay);
+    }
+    
     const destName = activeDestination.name;
     
     if (today < tripStart) {
       const diff = tripStart.getTime() - today.getTime();
-      const days = Math.ceil(diff / (1000 * 3600 * 24));
+      const days = Math.round(diff / (1000 * 3600 * 24));
       setCountdownText(`⏳ Noch ${days} Tage bis ${destName}!`);
     } else if (today >= tripStart && today <= tripEnd) {
       const diff = tripEnd.getTime() - today.getTime();
-      const days = Math.ceil(diff / (1000 * 3600 * 24));
+      const days = Math.round(diff / (1000 * 3600 * 24));
       if (days === 0) {
         setCountdownText(`🌴 Letzter Tag auf ${destName}!`);
       } else {
